@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {decrease, increase, clear, countSelector} from "./reducers/counter";
+import {decrease, increase, clear, countSelector, updateAtSelector} from "./reducers/counter";
 import {count, map} from "rxjs/internal/operators";
 
 type counterMode = 'increase' | 'decrease' | 'clear';
@@ -10,17 +10,16 @@ type counterMode = 'increase' | 'decrease' | 'clear';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  updateAt?: number;
 
   count$ = this.store.select(countSelector);
   cannotDecrease$ = this.count$.pipe(map(count => count <= 0));
+  updateAt$ = this.store.select(updateAtSelector);
 
 
   constructor(private store: Store) {
   }
 
   counterSum(value: counterMode): void {
-    this.updateAt = Date.now();
     switch (value) {
       case 'increase':
         this.store.dispatch(increase());
