@@ -1,5 +1,7 @@
-import {createAction, createFeatureSelector, createReducer, createSelector, on} from '@ngrx/store';
+import {createAction, createFeatureSelector, createReducer, createSelector, on, props} from '@ngrx/store';
 import {state} from "@angular/animations";
+
+export const COUNTER_KEY = 'counter';
 
 
 export const increase = createAction('[COUNTER] increase');
@@ -8,8 +10,14 @@ export const decrease = createAction('[COUNTER] decrease');
 
 export const clear = createAction('[COUNTER] clear');
 
+export const changeUpdatedAt = createAction(
+  '[COUNTER] change updated at',
+  props<{ updateAt: number }>()
+);
+
 export interface CounterState {
   count: number;
+  updateAt?: number;
 }
 export const initialState: CounterState = {
   count: 0
@@ -24,10 +32,14 @@ export const counterReducer = createReducer(
     ...state, count: state.count - 1
   })),
   on(clear, state => ({
-    ...state, count: state.count = 0
+    ...state, count: 0
+  })),
+  on(changeUpdatedAt, (state, action) => ({
+    ...state, updateAt: action.updateAt
   }))
 );
 
-export const featureSelectore = createFeatureSelector<CounterState>('counter');
+export const featureSelectore = createFeatureSelector<CounterState>(COUNTER_KEY);
 
 export const countSelector = createSelector(featureSelectore, state => state.count);
+export const updateAtSelector = createSelector(featureSelectore, state => state.updateAt);
